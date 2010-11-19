@@ -57,6 +57,20 @@ describe User do
       subject.should be_valid
     end
 
+
+    it 'has many orders' do
+      subject.should respond_to(:orders)
+    end
+    
+    it 'can create an order, with item(s)' do
+      subject.attributes = {:first_name => "Joe", :last_name => "Smith"}
+      subject.save!
+      lambda {
+        order = subject.orders.create(:items => [Factory(:item)])
+        p order.errors.full_messages
+      }.should change(Order,:count).by(1)
+    end
+
   end
 
   describe "Custom Finders" do
@@ -77,4 +91,28 @@ describe User do
     end
 
   end
+  
+  describe "custom finders for items"  do
+    before do
+      @gamer = Factory(:user, :first_name => "Mr", :last_name => "Gamer")
+      @mom = Factory(:user, :first_name => "Mrs", :last_name => "Mom")
+      
+      @xbox = Factory(:item, :name => "X-Box", :price => 200.00)
+      @kinnect = Factory(:item, :name => "Kinnect", :price => 149.00)
+      @wii = Factory(:item, :name => "Wii", :price => 149.99)
+      @ps3 = Factory(:item, :name => "PS3", :price => 179.99)
+      
+      @order1 = Factory(:order, :items => [@xbox, @kinnect], :user => @gamer)
+      @order2 = Factory(:order, :items => [@ps3], :user => @gamer)
+      @order3 = Factory(:order, :items => [@wii], :user => @mom)
+    end
+    
+    it 'finds all the items bought by user' do
+      @gamer.my_items.should == [@xbox, @kinnect, @ps3]
+
+    end
+    
+  end
+  
+  
 end

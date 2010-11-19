@@ -10,3 +10,13 @@ Factory.define(:shipping_address) do |s|
   s.zip "94321"
   s.association :user
 end
+
+Factory.define(:order) do |o|
+  o.association :user
+end
+
+Factory.define(:item) do |i|
+  i.name "Box"
+  i.description "A very nice, big box."
+  i.price 10.02
+end
